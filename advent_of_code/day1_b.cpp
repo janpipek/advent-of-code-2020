@@ -5,7 +5,7 @@
 using namespace std;
 
 int main(int argc, char** argv) {
-	vector<int> numbers = integersFromFile("input-01.txt");
+	vector<int> numbers = readIntegers("input-01.txt");
 	sort(numbers.begin(), numbers.end());
 
 	for (int i: numbers) {

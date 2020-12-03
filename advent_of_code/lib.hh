@@ -2,36 +2,16 @@
 #define ADVENT_OF_CODE_LIB_HH
 
 #include <fstream>
-#include <filesystem>
-#include <cstdlib>
 #include <string>
+#include <sstream>
+#include <vector>
 
-std::ifstream openInputFile(const std::string& basename) {
-	char* directory = getenv("ADVENT_OF_CODE_DATA_DIR");
-	if (!directory) {
-		directory = ".";
-	}
+std::ifstream openInputFile(const std::string& basename);
 
-	auto dataPath = std::filesystem::path(directory) / basename;
-	std::ifstream infile(dataPath);
-	std::string buffer;
+std::vector<std::string> readLines(const std::string& basename);
 
-	if (!infile.good()) {
-		std::cerr << "File " << absolute(dataPath) << " could not be opened." << std::endl;
-		exit(-1);
-	}
-	return infile;
-}
+std::vector<int> readIntegers(const std::string& basename);
 
-std::vector<int> integersFromFile(const std::string& basename) {
-	auto infile = openInputFile(basename);
-	std::string buffer;
-	std::vector<int> numbers;
+std::vector<std::string> split(const std::string& original, char delimiter = ' '); 
 
-	while (getline(infile, buffer)) {
-		int current = stoi(buffer);
-		numbers.push_back(current);
-	}
-	return numbers;
-}
 #endif
