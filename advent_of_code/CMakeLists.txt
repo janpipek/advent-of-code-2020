@@ -10,4 +10,6 @@ add_executable (day1_a "day1_a.cpp" "lib.cpp")
 add_executable (day1_b "day1_b.cpp" "lib.cpp")
 add_executable (day2_a "day2_a.cpp" "lib.cpp")
 add_executable (day2_b "day2_b.cpp" "lib.cpp")
+add_executable (day3_a "day3_a.cpp" "lib.cpp")
+add_executable (day3_b "day3_b.cpp" "lib.cpp")
 

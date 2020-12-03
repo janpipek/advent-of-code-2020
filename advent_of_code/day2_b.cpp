@@ -14,7 +14,6 @@ bool validLine(const string& line) {
 	int second = stoi(first_second[1]);
 	char letter = positions_letter[1][0];
 	string password = rule_password[1]; // offset 1 ;-)
-
 	return (password[first] == letter) != (password[second] == letter);
 }
 
