@@ -12,6 +12,9 @@ int main(int argc, char** argv) {
 		for (int j : numbers) {
 			auto expected = 2020 - (i + j);
 			auto k_candidate = lower_bound(numbers.begin(), numbers.end(), expected);
+			if (k_candidate == numbers.end()) {
+				continue;
+			}
 			if (*k_candidate == expected) {
 				cout << i << " + " << j << +" + " << expected << " = 2020" << endl;
 				cout << i * j * expected << endl;
