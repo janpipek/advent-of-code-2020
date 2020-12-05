@@ -25,8 +25,6 @@ public:
         }
         // All fields are present, no need to check
 
-        std::regex allDigits("\\d+");
-
         // byr
         const auto byr = getValue("byr");
         if (!_matchesYear(byr, 1920, 2002)) {
