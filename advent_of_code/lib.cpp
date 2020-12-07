@@ -66,12 +66,36 @@ std::vector<int> readIntegers(const std::string& basename) {
 	return numbers;
 }
 
-std::vector<std::string> split(const std::string& original, char delimiter) {
+std::vector<std::string> split(const std::string& original, char delimiter, int maxSplits) {
 	vector<string> result;
 	string buffer;
 	istringstream source(original);
-	while (getline(source, buffer, delimiter)) {
+	int splits = 0;
+
+	while (getline(source, buffer, delimiter) && splits != maxSplits) {
 		result.push_back(buffer);
+		splits++;
 	}
+	return result;
+}
+
+std::vector<std::string> split(const std::string& original, const std::string& delimiter, int maxSplits)
+{
+	std::vector<string> result;
+	int splits = 0;
+	size_t offset = 0;
+
+	while(true) {
+		if (splits == maxSplits) {
+			break;
+		}
+		size_t pos = original.find(delimiter, offset);
+		if (pos == string::npos) {
+			break;
+		}
+		result.push_back(original.substr(offset, pos - offset));
+		offset = pos + delimiter.length();
+	}
+	result.push_back(original.substr(offset));
 	return result;
 }

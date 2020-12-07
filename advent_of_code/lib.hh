@@ -14,6 +14,8 @@ std::vector<std::vector<std::string>>readLineGroups(const std::string& basename)
 
 std::vector<int> readIntegers(const std::string& basename);
 
-std::vector<std::string> split(const std::string& original, char delimiter = ' '); 
+std::vector<std::string> split(const std::string& original, char delimiter = ' ', int maxSplits = -1);
+
+std::vector<std::string> split(const std::string& original, const std::string& delimiter, int maxSplits = -1);
 
 #endif
