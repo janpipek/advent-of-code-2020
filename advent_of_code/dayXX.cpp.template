@@ -1,0 +1,21 @@
+#include <iostream>
+#include <string>
+#include <algorithm>
+
+#include "lib.hh"
+
+using namespace std;
+
+void taskA() {
+
+}
+
+void taskB() {
+
+}
+
+int main(int argc, char** argv)
+{
+    taskA();
+    taskB();
+}

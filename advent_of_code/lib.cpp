@@ -35,6 +35,25 @@ std::vector<std::string> readLines(const std::string& basename) {
 	return lines;
 }
 
+std::vector<std::vector<std::string>> readLineGroups(const std::string& basename)
+{
+	const auto lines = readLines(basename);
+	std::vector<std::vector<std::string>> lineGroups;
+	std::vector<std::string> currentGroup;
+
+	for (auto& line : lines) {
+		if (!line.length()) {
+			lineGroups.push_back(currentGroup);
+			currentGroup = {};
+		}
+		else {
+			currentGroup.push_back(line);
+		}
+	}
+	lineGroups.push_back(currentGroup);
+	return lineGroups;
+}
+
 std::vector<int> readIntegers(const std::string& basename) {
 	auto infile = openInputFile(basename);
 	std::string buffer;

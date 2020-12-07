@@ -10,6 +10,8 @@ std::ifstream openInputFile(const std::string& basename);
 
 std::vector<std::string> readLines(const std::string& basename);
 
+std::vector<std::vector<std::string>>readLineGroups(const std::string& basename);
+
 std::vector<int> readIntegers(const std::string& basename);
 
 std::vector<std::string> split(const std::string& original, char delimiter = ' '); 
