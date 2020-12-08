@@ -18,4 +18,5 @@ add_executable (day5_a "day5_a.cpp" "lib.cpp")
 add_executable (day5_b "day5_b.cpp" "lib.cpp")
 add_executable (day6 "day6.cpp" "lib.cpp")
 add_executable (day7 "day7.cpp" "lib.cpp")
+add_executable (day8 "day8.cpp" "lib.cpp")
 
