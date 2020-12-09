@@ -8,33 +8,25 @@
 #include <sstream>
 #include <vector>
 
-struct solution_not_found : public std::exception
+template <typename Task> void runTask(const std::string& name, Task task)
 {
-};
+	std::cout << "Task " << name << ": ";
+	try
+	{
+		std::cout << task();
+	}
+	catch (std::exception& exc)
+	{
+		std::cout << exc.what();
+	};
+	std::cout << std::endl;
+}
 
 template <typename TaskA, typename TaskB>
 void runTasks(TaskA taskA, TaskB taskB)
 {
-	std::cout << "Solution A: ";
-	try
-	{
-		std::cout << taskA();
-	}
-	catch (solution_not_found &)
-	{
-		std::cout << "ERROR!";
-	};
-	std::cout << std::endl;
-	std::cout << "Solution B: ";
-	try
-	{
-		std::cout << taskB();
-	}
-	catch (solution_not_found &)
-	{
-		std::cout << "ERROR!";
-	};
-	std::cout << std::endl;
+	runTask("A", taskA);
+	runTask("B", taskB);
 }
 
 #define MAIN                        \
@@ -43,9 +35,14 @@ void runTasks(TaskA taskA, TaskB taskB)
 		runTasks(taskA, taskB);     \
 	}
 
-#define SOLUTION_NOT_FOUND          \
-	{                               \
-		throw solution_not_found(); \
+#define SOLUTION_NOT_FOUND                     \
+	{                                          \
+		throw std::exception("NOT FOUND");     \
+	};
+
+#define NOT_YET_IMPLEMENTED                          \
+	{                                                \
+		throw std::exception("NOT IMPLEMENTED"); return -1;    \
 	};
 
 std::ifstream openInputFile(const std::string &basename)

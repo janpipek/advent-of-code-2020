@@ -76,7 +76,6 @@ auto taskA() {
 }
 
 auto taskB() {
-    SOLUTION_NOT_FOUND;
     auto numbers = readLongs("input-09.txt");
     deque<long long> numberQueue;
     long long result = 0LL;
