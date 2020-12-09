@@ -61,7 +61,6 @@ std::vector<long long> findContiguous(long long requiredSum, const vector<long l
 auto taskA() {
     auto numbers = readLongs("input-09.txt");
     deque<long long> numberQueue;
-    long long result = 0;
 
     for (auto number : numbers) {
         if (numberQueue.size() == MAX_SIZE) {
@@ -78,7 +77,6 @@ auto taskA() {
 auto taskB() {
     auto numbers = readLongs("input-09.txt");
     deque<long long> numberQueue;
-    long long result = 0LL;
 
     for (auto number : numbers) {
         if (numberQueue.size() == MAX_SIZE) {
