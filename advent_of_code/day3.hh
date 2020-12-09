@@ -20,8 +20,8 @@ public:
 		return _data[row][col % width];	
 	}
 
-	const int height;
-	const int width;
+	const size_t height;
+	const size_t width;
 
 private:
 	std::vector<std::vector<bool>> _data;
@@ -48,7 +48,7 @@ long countTrees(const Matrix &matrix, int right, int down)
 Matrix parseTrees(const std::vector<std::string> lines)
 {
 	std::vector<std::vector<bool>> data;
-	for (auto line : lines)
+	for (const auto& line : lines)
 	{
 		std::vector<bool> rowData;
 		for (auto symbol : line)
