@@ -67,21 +67,15 @@ map<string, BagRule> readRules() {
     return rules;
 }
 
-void taskA() {
+auto taskA() {
     const auto rules = readRules();
-    auto result = count_if(rules.begin(), rules.end(), [rules](const auto& kv) { return canContain(rules, kv.second, "shiny gold"); });
-    cout << "Number of bags that can contain shiny gold: " << result << endl;
+    return count_if(rules.begin(), rules.end(), [rules](const auto& kv) { return canContain(rules, kv.second, "shiny gold"); });
 }
 
-void taskB() {
+auto taskB() {
     const auto rules = readRules();
     auto shinyGoldRule = rules.at("shiny gold");
-    auto result = totalBags(rules, shinyGoldRule);
-    cout << "Total number of bags inside the shiny gold one: " << result << endl;
+    return totalBags(rules, shinyGoldRule);
 }
 
-int main(int argc, char** argv)
-{
-    taskA();
-    taskB();
-}
+MAIN;

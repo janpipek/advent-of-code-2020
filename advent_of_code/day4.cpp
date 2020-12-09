@@ -1,10 +1,12 @@
-#ifndef DAY4_HH
-#define DAY4_HH
-
+#include <iostream>
 #include <map>
-#include <string>
-#include <vector>
 #include <regex>
+#include <string>
+#include <algorithm>
+
+#include "lib.hh"
+
+using namespace std;
 
 class Passport {
 public:
@@ -138,4 +140,15 @@ const std::vector<Passport> readPassports(const std::string& path) {
     return passports;
 }
 
-#endif // !DAY4_HH
+auto taskA()
+{
+    auto passports = readPassports("input-04.txt");
+    return count_if(passports.begin(), passports.end(), [](auto& p) { return p.hasRequiredFields(); });
+}
+
+auto taskB() {
+    auto passports = readPassports("input-04.txt");
+    return count_if(passports.begin(), passports.end(), [](auto& p) { return p.isValid(); });
+}
+
+MAIN;

@@ -48,13 +48,13 @@ pair<bool, int> runProgram(const vector<Instruction>& instructions) {
     return { position == instructions.size(), accumulator };
 }
 
-void taskA() {
+auto taskA() {
     auto instructions = readInstructions("input-08.txt");
     auto result = runProgram(instructions);
-    cout << "Accumulator value before the second run of the loop: " << result.second << endl;
+    return result.second;
 }
 
-void taskB() {
+auto taskB() {
     auto instructions = readInstructions("input-08.txt");
     pair<bool, int> result;
 
@@ -69,11 +69,7 @@ void taskB() {
             break;
         }
     }
-    cout << "Accumulator value before the second run of the loop: " << result.second << endl;
+    return result.second;
 }
 
-int main(int argc, char** argv)
-{
-    taskA();
-    taskB();
-}
+MAIN;

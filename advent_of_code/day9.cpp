@@ -58,7 +58,7 @@ std::vector<long long> findContiguous(long long requiredSum, const vector<long l
     return {};
 }
 
-void taskA() {
+auto taskA() {
     auto numbers = readLongs("input-09.txt");
     deque<long long> numberQueue;
     long long result = 0;
@@ -66,21 +66,17 @@ void taskA() {
     for (auto number : numbers) {
         if (numberQueue.size() == MAX_SIZE) {
             if (!addsTo(number, numberQueue)) {
-                result = number;
-                break;
+                return number;
             }
             numberQueue.pop_front();
         }
         numberQueue.push_back(number);
     }
-    if (!result) {
-        cerr << "Not found" << endl;
-        exit(-1);
-    }
-    cout << "Solution A: " << result << endl;
+    SOLUTION_NOT_FOUND
 }
 
-void taskB() {
+auto taskB() {
+    SOLUTION_NOT_FOUND;
     auto numbers = readLongs("input-09.txt");
     deque<long long> numberQueue;
     long long result = 0LL;
@@ -90,22 +86,16 @@ void taskB() {
             if (!addsTo(number, numberQueue)) {
                 auto contiguous = findContiguous(number, numbers);
                 if (!contiguous.size()) {
-                    cerr << "Not found." << endl;
-                    exit(-1);
+                    SOLUTION_NOT_FOUND
                 }
                 auto solution = minmax_element(contiguous.cbegin(), contiguous.cend());
-                result = *(solution.first) + *(solution.second);
-                break;
+                return *(solution.first) + *(solution.second);
             }
             numberQueue.pop_front();
         }
         numberQueue.push_back(number);
     }
-    cout << "Solution B: " << result << endl;
+    SOLUTION_NOT_FOUND
 }
 
-int main(int argc, char** argv)
-{
-    taskA();
-    taskB();
-}
+MAIN;

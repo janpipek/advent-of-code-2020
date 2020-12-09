@@ -7,7 +7,7 @@
 
 using namespace std;
 
-void taskA() {
+auto taskA() {
     auto lineGroups = readLineGroups("input-06.txt");
 
     size_t total = 0;
@@ -21,10 +21,10 @@ void taskA() {
         }
         total += characters.size();
     }
-    cout << "Total A: " << total << endl;
+    return total;
 }
 
-void taskB() {
+auto taskB() {
     auto lineGroups = readLineGroups("input-06.txt");
 
     size_t total = 0;
@@ -47,11 +47,7 @@ void taskB() {
         }
         total += groupIntersect.size();
     }
-    cout << "Total B: " << total << endl;
+    return total;
 }
 
-int main(int argc, char** argv)
-{
-    taskA();
-    taskB();
-}
+MAIN;

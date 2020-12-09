@@ -1,10 +1,22 @@
 #include <iostream>
-#include <algorithm>
+
 #include "lib.hh"
 
 using namespace std;
 
-int main(int argc, char** argv) {
+auto taskA() {
+	vector<int> numbers = readIntegers("input-01.txt");
+	for (auto i : numbers) {
+		for (auto j: numbers) {
+			if (j + i == 2020) {
+				return i * j;
+			}
+		}
+	}
+	SOLUTION_NOT_FOUND;
+}
+
+auto taskB() {
 	vector<int> numbers = readIntegers("input-01.txt");
 	sort(numbers.begin(), numbers.end());
 
@@ -16,12 +28,11 @@ int main(int argc, char** argv) {
 				continue;
 			}
 			if (*k_candidate == expected) {
-				cout << i << " + " << j << +" + " << expected << " = 2020" << endl;
-				cout << i * j * expected << endl;
-				exit(0);
+				return i * j * expected;
 			}
 		}
 	}
-	cerr << "Not found." << endl;
-	exit(-2);
+	SOLUTION_NOT_FOUND;
 }
+
+MAIN;

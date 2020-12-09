@@ -6,16 +6,12 @@
 
 using namespace std;
 
-void taskA() {
-
+auto taskA() {
+	SOLUTION_NOT_FOUND
 }
 
-void taskB() {
-
+auto taskB() {
+	SOLUTION_NOT_FOUND
 }
 
-int main(int argc, char** argv)
-{
-    taskA();
-    taskB();
-}
+MAIN;
