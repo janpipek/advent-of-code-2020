@@ -32,14 +32,12 @@ bool validLineB(const string& line) {
 
 auto taskA() {
 	auto lines = readLines("input-02.txt");
-	int validCount = count_if(lines.begin(), lines.end(), validLineA);
-	return validCount;
+	return count_if(lines.begin(), lines.end(), validLineA);
 }
 
 auto taskB() {
 	auto lines = readLines("input-02.txt");
-	int validCount = count_if(lines.begin(), lines.end(), validLineB);
-	return validCount;
+	return count_if(lines.begin(), lines.end(), validLineB);
 }
 
 MAIN;
