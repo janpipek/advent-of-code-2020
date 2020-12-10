@@ -22,7 +22,7 @@ long long ways(int from, const vector<int>& joltages) {
     if (cache.find(from) != cache.end()) {
         return cache.at(from);
     }
-    if (find(joltages.cbegin(), joltages.cend(), from) == joltages.cend()) {
+    if (!binary_search(joltages.cbegin(), joltages.cend(), from)) {
         return 0;
     }
     if (from == joltages[joltages.size() - 1]) {
