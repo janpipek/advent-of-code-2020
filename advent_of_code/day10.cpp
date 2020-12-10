@@ -1,4 +1,5 @@
 #include <functional>
+#include <iterator>
 #include <iostream>
 #include <deque>
 #include <map>
@@ -11,15 +12,8 @@
 using namespace std;
 
 const vector<int> getDiffs(const vector<int>& joltages) {
-    int current;
     vector<int> result;
-
-    for (int adapter : joltages) {
-        if (adapter) { 
-            result.push_back(adapter - current);
-        }
-        current = adapter;
-    }
+    adjacent_difference(joltages.cbegin(), joltages.cend(), back_inserter(result));
     return result;
 }
 
