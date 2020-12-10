@@ -41,10 +41,15 @@ long long ways(int from, const vector<int>& joltages) {
     return sum;
 }
 
-auto taskA() {
+const vector<int> getSortedJoltages() {
     vector<int> joltages = readIntegers("input-10.txt");
     sort(joltages.begin(), joltages.end());
     joltages.push_back(joltages[joltages.size() - 1] + 3);
+    return joltages;
+}
+
+auto taskA() {
+    auto joltages = getSortedJoltages();
     auto diffs = getDiffs(joltages);
     int oneDiffs = count_if(diffs.cbegin(), diffs.cend(), [](int element) { return element == 1; });
     int threeDiffs = count_if(diffs.cbegin(), diffs.cend(), [](int element) { return element == 3; });
@@ -52,10 +57,7 @@ auto taskA() {
 }
 
 auto taskB() {
-    vector<int> joltages = readIntegers("input-10.txt");
-    sort(joltages.begin(), joltages.end());
-    joltages.push_back(joltages[joltages.size() - 1] + 3);
-    return ways(0, joltages);
+    return ways(0, getSortedJoltages());
 }
 
 MAIN;
