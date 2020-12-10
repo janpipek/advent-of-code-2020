@@ -1,6 +1,7 @@
 #ifndef ADVENT_OF_CODE_LIB_HH
 #define ADVENT_OF_CODE_LIB_HH
 
+#include <chrono>
 #include <exception>
 #include <filesystem>
 #include <fstream>
@@ -11,14 +12,19 @@
 template <typename Task> void runTask(const std::string& name, Task task)
 {
 	std::cout << "Task " << name << ": ";
+	auto start = std::chrono::steady_clock::now();
 	try
 	{
-		std::cout << task();
+		auto result = task();
+		auto stop = std::chrono::steady_clock::now();
+		std::cout << result << std::endl;
+		std::cout << "(took " << std::chrono::duration_cast<std::chrono::microseconds>(stop - start).count() << " us)" << std::endl;
 	}
 	catch (std::exception& exc)
 	{
-		std::cout << exc.what();
+		std::cout << exc.what() << std::endl;
 	};
+
 	std::cout << std::endl;
 }
 
