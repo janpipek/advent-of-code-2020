@@ -37,29 +37,24 @@ void runTasks(TaskA taskA, TaskB taskB)
 
 #define SOLUTION_NOT_FOUND                     \
 	{                                          \
-		throw std::exception("NOT FOUND");     \
+		throw std::runtime_error("NOT FOUND");     \
 	};
 
 #define NOT_YET_IMPLEMENTED                          \
 	{                                                \
-		throw std::exception("NOT IMPLEMENTED"); return -1;    \
+		throw std::runtime_error("NOT IMPLEMENTED"); return -1;    \
 	};
 
 std::ifstream openInputFile(const std::string &basename)
 {
-	char *directory = getenv("ADVENT_OF_CODE_DATA_DIR");
-	if (!directory)
-	{
-		directory = ".";
-	}
-
+	const char* directory = getenv("ADVENT_OF_CODE_DATA_DIR");
 	auto dataPath = std::filesystem::path(directory) / basename;
 	std::ifstream infile(dataPath);
 	std::string buffer;
 
 	if (!infile.good())
 	{
-		std::cerr << "File " << absolute(dataPath) << " could not be opened." << std::endl;
+		std::cerr << "File " << std::filesystem::absolute(dataPath) << " could not be opened." << std::endl;
 		exit(-1);
 	}
 	return infile;

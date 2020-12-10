@@ -81,7 +81,7 @@ auto taskB() {
 		{1, 2}
 	};
 
-	__int64 prod = 1;
+	long long prod = 1;
 	for (auto slope : slopes) {
 		int trees = countTrees(data, slope.first, slope.second);
 		// cout << slope.first << ", " << slope.second << " => " << trees << endl;
