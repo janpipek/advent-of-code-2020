@@ -11,11 +11,13 @@
 using namespace std;
 
 const vector<int> getDiffs(const vector<int>& joltages) {
-    int current = 0;
+    int current;
     vector<int> result;
 
     for (int adapter : joltages) {
-        result.push_back(adapter - current);
+        if (adapter) { 
+            result.push_back(adapter - current);
+        }
         current = adapter;
     }
     return result;
@@ -26,7 +28,7 @@ long long ways(int from, const vector<int>& joltages) {
     if (cache.find(from) != cache.end()) {
         return cache.at(from);
     }
-    if (from && find(joltages.cbegin(), joltages.cend(), from) == joltages.cend()) {
+    if (find(joltages.cbegin(), joltages.cend(), from) == joltages.cend()) {
         return 0;
     }
     if (from == joltages[joltages.size() - 1]) {
@@ -44,6 +46,7 @@ long long ways(int from, const vector<int>& joltages) {
 const vector<int> getSortedJoltages() {
     vector<int> joltages = readIntegers("input-10.txt");
     sort(joltages.begin(), joltages.end());
+    joltages.insert(joltages.begin(), 0);
     joltages.push_back(joltages[joltages.size() - 1] + 3);
     return joltages;
 }
