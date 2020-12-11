@@ -7,11 +7,11 @@
 using namespace std;
 
 auto taskA() {
-	SOLUTION_NOT_FOUND
+	NOT_YET_IMPLEMENTED
 }
 
 auto taskB() {
-	SOLUTION_NOT_FOUND
+	NOT_YET_IMPLEMENTED
 }
 
 MAIN;
