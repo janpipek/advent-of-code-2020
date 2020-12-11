@@ -45,7 +45,36 @@ size_t countAdjacent(const Matrix& seatPlan, size_t row, size_t column) {
     return count;
 }
 
-Matrix updateSeats(const Matrix& previousPlan) {
+size_t countInDirection(const Matrix& seatPlan, size_t row, size_t column) {
+    const static vector<pair<int, int>> directions = {{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
+    size_t count = 0;
+
+    for (auto direction : directions) {
+        int i = row;
+        int j = column;
+
+        i += direction.first;
+        j += direction.second;
+
+        while (
+            (i >= 0) && (j >= 0) &&
+            (i < seatPlan.size()) &&
+            (j < seatPlan[i].size())
+        ) {
+            auto seat = seatPlan[i][j];
+            if (seat == SeatState::unavailable) {
+                i += direction.first;
+                j += direction.second;
+                continue;
+            }
+            count += (seat == SeatState::occupied);
+            break;
+        }
+    }
+    return count;
+}
+
+Matrix updateSeats(const Matrix& previousPlan, decltype(countAdjacent) countHandler = countAdjacent, size_t occupiedLimit = 4) {
     Matrix nextPlan;
     for (size_t i = 0; i < previousPlan.size(); i++) {
         const auto& previousRow = previousPlan[i];
@@ -53,7 +82,7 @@ Matrix updateSeats(const Matrix& previousPlan) {
         for (size_t j = 0; j < previousRow.size(); j++) {
             SeatState previousState = previousRow[j]; 
             SeatState newState = previousState;
-            auto adjacent = countAdjacent(previousPlan, i, j);
+            auto adjacent = countHandler(previousPlan, i, j);
 
             switch (previousState)
             {
@@ -64,7 +93,7 @@ Matrix updateSeats(const Matrix& previousPlan) {
                 break;
 
             case SeatState::occupied:
-                if (adjacent >= 4) {
+                if (adjacent >= occupiedLimit) {
                     newState = SeatState::empty;
                 }
                 break;
@@ -138,7 +167,16 @@ auto taskA() {
 }
 
 auto taskB() {
-	NOT_YET_IMPLEMENTED
+    const auto lines = readLines("input-11.txt");
+    Matrix current = parseLines(lines);
+    while (true) {
+        auto next = updateSeats(current, countInDirection, 5);
+        if (next == current) {
+            break;
+        }
+        current = next;
+    }
+    return countOccupied(current);
 }
 
 MAIN;
