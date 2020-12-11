@@ -11,17 +11,18 @@
 
 template <typename Task> void runTask(const std::string& name, Task task)
 {
-	std::cout << "Task " << name << ": ";
 	auto start = std::chrono::steady_clock::now();
 	try
 	{
 		auto result = task();
 		auto stop = std::chrono::steady_clock::now();
+		std::cout << "Task " << name << ": ";
 		std::cout << result << std::endl;
 		std::cout << "(took " << std::chrono::duration_cast<std::chrono::microseconds>(stop - start).count() << " us)" << std::endl;
 	}
 	catch (std::exception& exc)
 	{
+		std::cout << "Task " << name << ": ";
 		std::cout << exc.what() << std::endl;
 	};
 

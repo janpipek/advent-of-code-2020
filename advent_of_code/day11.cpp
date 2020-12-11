@@ -32,14 +32,8 @@ size_t countOccupied(const Matrix& seatPlan) {
 size_t countAdjacent(const Matrix& seatPlan, size_t row, size_t column) {
     size_t count = 0;
 
-    for (int i = (int)row - 1; i <= row + 1; i++) {
-        if ((i < 0) || (i == seatPlan.size())) {
-            continue;
-        }
-        for (int j = (int)column - 1; j <= column + 1; j++) {
-            if ((j < 0) || (j == seatPlan[0].size())) {
-                continue;
-            }
+    for (int i = max(0, ((int)row) - 1); i <= min(row + 1, seatPlan.size() - 1); i++) {
+        for (int j = max(0, ((int)column) - 1); j <= min(column + 1, seatPlan[i].size() - 1); j++) {
             if ((i == row) && (j == column)) {  // The element itself
                 continue;
             }
@@ -110,11 +104,30 @@ Matrix parseLines(const vector<string>& lines) {
     return result;
 }
 
+/** DEBUGGING **/
+
+ostream& operator<<(ostream& out, const Matrix& seatPlan) {
+    for (const auto& row : seatPlan) {
+        for (auto seat : row) {
+            if (seat == SeatState::occupied) {
+                out << "#";
+            } else if (seat == SeatState::empty) {
+                out << "L";
+            } else {
+                out << ".";
+            }
+        }
+        out << endl;
+    }
+    return out;    
+}
+
+/** END DEBUGGING **/
+
 auto taskA() {
     const auto lines = readLines("input-11.txt");
     Matrix current = parseLines(lines);
     while (true) {
-        cout << countOccupied(current) << endl;
         auto next = updateSeats(current);
         if (next == current) {
             break;
