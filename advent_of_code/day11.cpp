@@ -2,8 +2,6 @@
 #include <string>
 #include <algorithm>
 
-#include "boost/multi_array.hpp"
-
 #include "lib.hh"
 
 using namespace std;
