@@ -20,4 +20,5 @@ add_executable (day10 "day10.cpp" )
 add_executable (day11 "day11.cpp" )
 add_executable (day12 "day12.cpp" )
 add_executable (day13 "day13.cpp" )
+add_executable (day14 "day14.cpp" )
 
