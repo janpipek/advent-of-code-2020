@@ -7,17 +7,18 @@
 
 using namespace std;
 
-const int OUT_OF_SERVICE = -1;
-const int INFINITE_TIME = std::numeric_limits<int>::max();
+const unsigned long long OUT_OF_SERVICE = std::numeric_limits<unsigned long long>::max();
+const unsigned long long x = OUT_OF_SERVICE;
+const unsigned long long INFINITE_TIME = std::numeric_limits<unsigned long long>::max();
 
 struct Input {
-    int timestamp;
-    vector<int> busNumbers;
+    unsigned long long timestamp;
+    vector<unsigned long long> busNumbers;
 };
 
-vector<int> parseBusNumbers(const string& line) {
-    vector<int> result;
-    for (auto bus : split(line, ',')) {
+vector<unsigned long long> parseBusNumbers(const string& line) {
+    vector<unsigned long long> result;
+    for (const auto& bus : split(line, ',')) {
         if (bus == "x") {
             result.push_back(OUT_OF_SERVICE);
         } else {
@@ -30,12 +31,12 @@ vector<int> parseBusNumbers(const string& line) {
 Input readInput() {
     auto lines = readLines("input-13.txt");
     return {
-        stoi(lines[0]),
+        stoull(lines[0]),
         parseBusNumbers(lines[1])
     };
 }
 
-inline int waitTime(int time, int busNumber) {
+inline unsigned long long waitTime(unsigned long long time, unsigned long long busNumber) {
     if (busNumber == OUT_OF_SERVICE) {
         return INFINITE_TIME;
     }
@@ -44,7 +45,7 @@ inline int waitTime(int time, int busNumber) {
 
 auto taskA() {
     auto input = readInput();
-    int bus = *min_element(
+    unsigned long long bus = *min_element(
         input.busNumbers.cbegin(),
         input.busNumbers.cend(),
         [input](auto bus1, auto bus2) {
@@ -54,10 +55,31 @@ auto taskA() {
     return bus * waitTime(input.timestamp, bus);
 }
 
+struct Pattern {
+    unsigned long long offset {0};
+    unsigned long long factor {1};
+};
+
+void updatePattern(Pattern& pattern, unsigned long long bus, unsigned long long order) {
+    if (bus == OUT_OF_SERVICE) {
+        return;
+    }
+    unsigned long long modulo = (bus > order) ? (bus - order) % bus : (bus - order % bus);
+    while (pattern.offset % bus != modulo) {
+        pattern.offset += pattern.factor;
+    }
+    pattern.factor *= bus;
+}
+
 auto taskB() {
+    // Note: All are primes
     auto input = readInput();
-    std::vector<long long> busNumber = asType<int, long long>(input.busNumbers);
-    NOT_YET_IMPLEMENTED
+    Pattern pattern {};
+
+    for (size_t i = 0; i < input.busNumbers.size(); i++) {
+        updatePattern(pattern, input.busNumbers[i], (unsigned long long)i);
+    }
+    return pattern.offset;
 }
 
 MAIN;
