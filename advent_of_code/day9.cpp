@@ -82,7 +82,7 @@ auto taskB() {
         if (numberQueue.size() == MAX_SIZE) {
             if (!addsTo(number, numberQueue)) {
                 auto contiguous = findContiguous(number, numbers);
-                if (!contiguous.size()) {
+                if (contiguous.empty()) {
                     SOLUTION_NOT_FOUND
                 }
                 auto solution = minmax_element(contiguous.cbegin(), contiguous.cend());

@@ -11,7 +11,7 @@
 
 using namespace std;
 
-const vector<int> getDiffs(const vector<int>& joltages) {
+vector<int> getDiffs(const vector<int>& joltages) {
     vector<int> result;
     adjacent_difference(joltages.cbegin(), joltages.cend(), back_inserter(result));
     return result;
@@ -37,7 +37,7 @@ long long ways(int from, const vector<int>& joltages) {
     return sum;
 }
 
-const vector<int> getSortedJoltages() {
+vector<int> getSortedJoltages() {
     vector<int> joltages = readIntegers("input-10.txt");
     sort(joltages.begin(), joltages.end());
     joltages.insert(joltages.begin(), 0);

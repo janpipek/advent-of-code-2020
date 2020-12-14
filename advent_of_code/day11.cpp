@@ -113,6 +113,9 @@ Matrix updateSeats(const Matrix &previousPlan, decltype(countAdjacent) countHand
                     newState = SeatState::empty;
                 }
                 break;
+
+            default:
+                break;
             }
             newRow.push_back(newState);
         }

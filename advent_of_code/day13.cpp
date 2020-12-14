@@ -8,7 +8,7 @@
 using namespace std;
 
 const int OUT_OF_SERVICE = -1;
-const int INFITE_TIME = std::numeric_limits<int>::max();
+const int INFINITE_TIME = std::numeric_limits<int>::max();
 
 struct Input {
     int timestamp;
@@ -37,7 +37,7 @@ Input readInput() {
 
 inline int waitTime(int time, int busNumber) {
     if (busNumber == OUT_OF_SERVICE) {
-        return INFITE_TIME;
+        return INFINITE_TIME;
     }
     return busNumber - (time % busNumber);
 }

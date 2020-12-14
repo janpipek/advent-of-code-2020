@@ -30,13 +30,13 @@ auto taskB() {
     size_t total = 0;
 
     for (const auto& group : lineGroups) {
-        if (group.size() < 1) {
+        if (group.empty()) {
             continue;
         }
         string groupIntersect = group[0];
 
         for (auto it = group.cbegin() + 1; it != group.cend(); it++) {
-            string newResult = "";
+            string newResult;
             for (auto c : *it) {
                 auto pos = groupIntersect.find(c);
                 if (pos != string::npos) {

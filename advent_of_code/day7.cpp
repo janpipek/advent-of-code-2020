@@ -12,8 +12,6 @@ struct BagRule {
     std::map<string, int> items;
 };
 
-map<string, BagRule> rules;
-
 bool canContain(const map<string, BagRule>& rules, const BagRule& rule, const string& color) {
     if (rule.items.find(color) != rule.items.end()) {
         return true;
@@ -30,7 +28,7 @@ bool canContain(const map<string, BagRule>& rules, const BagRule& rule, const st
 int totalBags(const map<string, BagRule>& rules, const BagRule& rule) {
     int total = 0;
     for (const auto& item : rule.items) {
-        BagRule itemRule = rules.at(item.first);
+        const BagRule& itemRule = rules.at(item.first);
         int itemCount = item.second;
         int itemTotal = itemCount * (1 + totalBags(rules, itemRule));
         total += itemTotal;

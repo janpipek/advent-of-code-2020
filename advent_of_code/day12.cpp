@@ -47,6 +47,10 @@ struct Position {
             case WEST:
                 x -= steps;
                 break;
+
+            default:
+                cerr << "Invalid azimuth " << azimuth << endl;
+                SOLUTION_NOT_FOUND;
         }
     }
 

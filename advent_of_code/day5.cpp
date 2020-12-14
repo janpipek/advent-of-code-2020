@@ -18,7 +18,7 @@ int parseSeatId(const std::string& line) {
     return seat;
 }
 
-const std::vector<int> readSeats(const std::string& path) {
+std::vector<int> readSeats(const std::string& path) {
     const auto lines = readLines(path);
     std::vector<int> seats;
     transform(lines.cbegin(), lines.cend(), std::back_inserter(seats), parseSeatId);

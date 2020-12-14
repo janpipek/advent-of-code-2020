@@ -88,18 +88,18 @@ public:
         return true;
     }
 
-    const std::string getValue(const std::string& key) const {
+    std::string getValue(const std::string& key) const {
         return _fields.at(key);
     }
 
-    void addField(std::string key, std::string value) {
+    void addField(const std::string& key, const std::string& value) {
         _fields[key] = value;
     }
 
 private:
     std::map<std::string, std::string> _fields;
 
-    bool _matchesYear(std::string str, int minYear, int maxYear) const {
+    bool _matchesYear(const std::string& str, int minYear, int maxYear) const {
         std::regex allDigits("\\d+");
         if (!std::regex_match(str, allDigits)) {
             return false;
@@ -121,7 +121,7 @@ void parseLineInto(const std::string& line, Passport& passport) {
 
 const std::vector<std::string> Passport::requiredFields = { "iyr", "hcl", "hgt", "eyr", "byr", "ecl", "pid" };
 
-const std::vector<Passport> readPassports(const std::string& path) {
+std::vector<Passport> readPassports(const std::string& path) {
     auto lines = readLines(path);
 
     std::vector<Passport> passports;

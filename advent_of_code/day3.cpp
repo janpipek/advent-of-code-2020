@@ -9,16 +9,16 @@ using namespace std;
 class Matrix
 {
 public:
-	Matrix(const std::vector<std::vector<bool>>& data) : _data(data), height(data.size()), width(data[0].size())
+	explicit Matrix(const std::vector<std::vector<bool>>& data) : _data(data), height(data.size()), width(data[0].size())
 	{
 		// We do not check that all rows are of equal length
 	}
 
-	bool isTree(int row, int col) const
+	bool isTree(size_t row, size_t col) const
 	{
 		if (row >= height)
 		{
-			throw "Invalid position";
+		    SOLUTION_NOT_FOUND;
 		}
 		return _data[row][col % width];
 	}
@@ -32,9 +32,9 @@ private:
 
 long countTrees(const Matrix& matrix, int right, int down)
 {
-	int col = 0;
-	int row = 0;
-	int trees = 0;
+	size_t col = 0;
+	size_t row = 0;
+	size_t trees = 0;
 
 	while (row < matrix.height)
 	{
@@ -48,7 +48,7 @@ long countTrees(const Matrix& matrix, int right, int down)
 	return trees;
 }
 
-Matrix parseTrees(const std::vector<std::string> lines)
+Matrix parseTrees(const std::vector<std::string>& lines)
 {
 	std::vector<std::vector<bool>> data;
 	for (const auto& line : lines)
@@ -84,7 +84,6 @@ auto taskB() {
 	long long prod = 1;
 	for (auto slope : slopes) {
 		int trees = countTrees(data, slope.first, slope.second);
-		// cout << slope.first << ", " << slope.second << " => " << trees << endl;
 		prod *= trees;
 	}
 	return prod;

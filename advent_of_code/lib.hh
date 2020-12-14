@@ -5,6 +5,7 @@
 #include <exception>
 #include <filesystem>
 #include <fstream>
+#include <iostream>
 #include <string>
 #include <sstream>
 #include <vector>
@@ -55,7 +56,12 @@ void runTasks(TaskA taskA, TaskB taskB)
 std::ifstream openInputFile(const std::string &basename)
 {
 	const char* directory = getenv("ADVENT_OF_CODE_DATA_DIR");
-	auto dataPath = std::filesystem::path(directory) / basename;
+    std::filesystem::path dataPath;
+	if (directory) {
+	    dataPath = std::filesystem::path(directory) / basename;
+    } else {
+        dataPath = std::filesystem::path(basename);
+	}
 	std::ifstream infile(dataPath);
 	std::string buffer;
 

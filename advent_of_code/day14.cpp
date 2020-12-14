@@ -1,8 +1,6 @@
-#include <iostream>
 #include <map>
 #include <numeric>
 #include <string>
-#include <algorithm>
 
 #include "lib.hh"
 
@@ -27,7 +25,7 @@ unsigned long long sumMemory(const Memory& memory) {
     );
 }
 
-unsigned long long applyMask(Mask mask, long long number) {
+unsigned long long applyMask(Mask mask, unsigned long long number) {
     unsigned long long result = 0;
     for (size_t i = 0; i < mask.size(); i++) {
         auto maskBit = mask[mask.size() - i - 1];
@@ -44,12 +42,12 @@ unsigned long long applyMask(Mask mask, long long number) {
 auto taskA() {
     auto lines = readLines("input-14.txt");
     ProgramState state;
-    for (auto line : lines) {
+    for (const auto& line : lines) {
         if (line.substr(0, 3) == "mem") {
             auto address_value = split(line.substr(4), "] = ");
             size_t address = stoul(address_value[0]);
-            long long value = stoll(address_value[1]);
-            long long maskedValue = applyMask(state.mask, value);
+            unsigned long long value = stoll(address_value[1]);
+            unsigned long long maskedValue = applyMask(state.mask, value);
             state.memory[address] = maskedValue;
         }
         else if (line.substr(0, 4) == "mask") {
@@ -83,12 +81,12 @@ vector<unsigned long long> decodeAddresses(unsigned long long address, const Mas
 auto taskB() {
     auto lines = readLines("input-14.txt");
     ProgramState state;
-    for (auto line : lines) {
+    for (const auto& line : lines) {
         if (line.substr(0, 3) == "mem") {
             auto address_value = split(line.substr(4), "] = ");
-            unsigned long long address = stoull(address_value[0]);
+            unsigned long long baseAddress = stoull(address_value[0]);
             unsigned long long value = stoll(address_value[1]);
-            for (unsigned long long address : decodeAddresses(address, state.mask)) {
+            for (unsigned long long address : decodeAddresses(baseAddress, state.mask)) {
                 state.memory[address] = value;
             }
         }
