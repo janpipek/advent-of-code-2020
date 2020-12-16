@@ -6,8 +6,7 @@
 
 using namespace std;
 
-enum class SeatState: char
-{
+enum class SeatState : char {
     empty = 'L',
     occupied = '#',
     unavailable = '.'
@@ -16,15 +15,11 @@ enum class SeatState: char
 using Row = vector<SeatState>;
 using Matrix = vector<Row>;
 
-size_t countOccupied(const Matrix &seatPlan)
-{
+size_t countOccupied(const Matrix &seatPlan) {
     size_t count = 0;
-    for (const auto &row : seatPlan)
-    {
-        for (auto seat : row)
-        {
-            if (seat == SeatState::occupied)
-            {
+    for (const auto &row : seatPlan) {
+        for (auto seat : row) {
+            if (seat == SeatState::occupied) {
                 count++;
             }
         }
@@ -32,20 +27,15 @@ size_t countOccupied(const Matrix &seatPlan)
     return count;
 }
 
-size_t countAdjacent(const Matrix &seatPlan, size_t row, size_t column)
-{
+size_t countAdjacent(const Matrix &seatPlan, size_t row, size_t column) {
     size_t count = 0;
 
-    for (int i = max(0, ((int)row) - 1); i <= min(row + 1, seatPlan.size() - 1); i++)
-    {
-        for (int j = max(0, ((int)column) - 1); j <= min(column + 1, seatPlan[i].size() - 1); j++)
-        {
-            if ((i == row) && (j == column))
-            { // The element itself
+    for (int i = max(0, ((int) row) - 1); i <= min(row + 1, seatPlan.size() - 1); i++) {
+        for (int j = max(0, ((int) column) - 1); j <= min(column + 1, seatPlan[i].size() - 1); j++) {
+            if ((i == row) && (j == column)) { // The element itself
                 continue;
             }
-            if (seatPlan[i][j] == SeatState::occupied)
-            {
+            if (seatPlan[i][j] == SeatState::occupied) {
                 count++;
             }
         }
@@ -53,13 +43,18 @@ size_t countAdjacent(const Matrix &seatPlan, size_t row, size_t column)
     return count;
 }
 
-size_t countInDirection(const Matrix &seatPlan, size_t row, size_t column)
-{
-    const static vector<pair<int, int>> directions = {{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
+size_t countInDirection(const Matrix &seatPlan, size_t row, size_t column) {
+    const static vector<pair<int, int>> directions = {{-1, -1},
+                                                      {-1, 0},
+                                                      {-1, 1},
+                                                      {0,  -1},
+                                                      {0,  1},
+                                                      {1,  -1},
+                                                      {1,  0},
+                                                      {1,  1}};
     size_t count = 0;
 
-    for (auto direction : directions)
-    {
+    for (auto direction : directions) {
         int i = row;
         int j = column;
 
@@ -67,13 +62,11 @@ size_t countInDirection(const Matrix &seatPlan, size_t row, size_t column)
         j += direction.second;
 
         while (
-            (i >= 0) && (j >= 0) &&
-            (i < seatPlan.size()) &&
-            (j < seatPlan[i].size()))
-        {
+                (i >= 0) && (j >= 0) &&
+                (i < seatPlan.size()) &&
+                (j < seatPlan[i].size())) {
             auto seat = seatPlan[i][j];
-            if (seat == SeatState::unavailable)
-            {
+            if (seat == SeatState::unavailable) {
                 i += direction.first;
                 j += direction.second;
                 continue;
@@ -85,37 +78,32 @@ size_t countInDirection(const Matrix &seatPlan, size_t row, size_t column)
     return count;
 }
 
-Matrix updateSeats(const Matrix &previousPlan, decltype(countAdjacent) countHandler = countAdjacent, size_t occupiedLimit = 4)
-{
+Matrix updateSeats(const Matrix &previousPlan, decltype(countAdjacent) countHandler = countAdjacent,
+                   size_t occupiedLimit = 4) {
     Matrix nextPlan;
-    for (size_t i = 0; i < previousPlan.size(); i++)
-    {
+    for (size_t i = 0; i < previousPlan.size(); i++) {
         const auto &previousRow = previousPlan[i];
         Row newRow;
-        for (size_t j = 0; j < previousRow.size(); j++)
-        {
+        for (size_t j = 0; j < previousRow.size(); j++) {
             SeatState previousState = previousRow[j];
             SeatState newState = previousState;
             auto adjacent = countHandler(previousPlan, i, j);
 
-            switch (previousState)
-            {
-            case SeatState::empty:
-                if (adjacent == 0)
-                {
-                    newState = SeatState::occupied;
-                }
-                break;
+            switch (previousState) {
+                case SeatState::empty:
+                    if (adjacent == 0) {
+                        newState = SeatState::occupied;
+                    }
+                    break;
 
-            case SeatState::occupied:
-                if (adjacent >= occupiedLimit)
-                {
-                    newState = SeatState::empty;
-                }
-                break;
+                case SeatState::occupied:
+                    if (adjacent >= occupiedLimit) {
+                        newState = SeatState::empty;
+                    }
+                    break;
 
-            default:
-                break;
+                default:
+                    break;
             }
             newRow.push_back(newState);
         }
@@ -124,14 +112,11 @@ Matrix updateSeats(const Matrix &previousPlan, decltype(countAdjacent) countHand
     return nextPlan;
 }
 
-Matrix parseLines(const vector<string> &lines)
-{
+Matrix parseLines(const vector<string> &lines) {
     Matrix result;
-    for (const auto &line : lines)
-    {
+    for (const auto &line : lines) {
         Row row;
-        for (char c : line)
-        {
+        for (char c : line) {
             row.push_back(SeatState(c));
         }
         result.push_back(row);
@@ -141,13 +126,10 @@ Matrix parseLines(const vector<string> &lines)
 
 /** DEBUGGING **/
 
-ostream &operator<<(ostream &out, const Matrix &seatPlan)
-{
-    for (const auto &row : seatPlan)
-    {
-        for (auto seat : row)
-        {
-            out << (char)seat;
+ostream &operator<<(ostream &out, const Matrix &seatPlan) {
+    for (const auto &row : seatPlan) {
+        for (auto seat : row) {
+            out << (char) seat;
         }
         out << endl;
     }
@@ -156,15 +138,12 @@ ostream &operator<<(ostream &out, const Matrix &seatPlan)
 
 /** END DEBUGGING **/
 
-auto taskA()
-{
+auto taskA() {
     const auto lines = readLines("input-11.txt");
     Matrix current = parseLines(lines);
-    while (true)
-    {
+    while (true) {
         auto next = updateSeats(current);
-        if (next == current)
-        {
+        if (next == current) {
             break;
         }
         current = next;
@@ -172,15 +151,12 @@ auto taskA()
     return countOccupied(current);
 }
 
-auto taskB()
-{
+auto taskB() {
     const auto lines = readLines("input-11.txt");
     Matrix current = parseLines(lines);
-    while (true)
-    {
+    while (true) {
         auto next = updateSeats(current, countInDirection, 5);
-        if (next == current)
-        {
+        if (next == current) {
             break;
         }
         current = next;

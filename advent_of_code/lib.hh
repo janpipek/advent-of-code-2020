@@ -85,6 +85,23 @@ std::vector<std::string> readLines(const std::string &basename)
 	return lines;
 }
 
+std::vector<std::vector<std::string>> readSections(const std::string &basename) {
+    auto lines = readLines(basename);
+    std::vector<std::vector<std::string>> result;
+    std::vector<std::string> currentSection;
+    for (const auto& line: lines) {
+        if (line.empty()) {
+            result.push_back(currentSection);
+            currentSection = {};
+        }
+        else {
+            currentSection.push_back(line);
+        }
+    }
+    result.push_back(currentSection);
+    return result;
+}
+
 std::vector<std::vector<std::string>> readLineGroups(const std::string &basename)
 {
 	const auto lines = readLines(basename);
@@ -178,5 +195,17 @@ template<typename T1, typename T2> std::vector<T2> asType(const std::vector<T1>&
 	std::vector<T2> output;
 	std::transform(input.cbegin(), input.cend(), std::back_inserter(output), [](const T1& x) {return (T2)x; });
 	return output;
+}
+
+template<typename T> std::ostream& operator<<(std::ostream& out, const std::vector<T>& v) {
+    out << "{";
+    for (int i = 0; i < v.size(); i++) {
+        out << v[i];
+        if (i != v.size() - 1) {
+            out << ", ";
+        }
+    }
+    out << "}";
+    return out;
 }
 #endif

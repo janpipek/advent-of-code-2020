@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <iostream>
 #include <map>
 
 #include "lib.hh"
@@ -22,6 +21,7 @@ auto taskA() {
 }
 
 auto taskB() {
+    // Takes some time, hash map would be a more appropriate data structure for history
     const vector<int> input = {20, 0, 1, 11, 6, 3};
     map<int, int> history;
     for (int i = 0; i < input.size() - 1; i++) {
