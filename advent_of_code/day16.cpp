@@ -124,14 +124,10 @@ auto taskA() {
 
 auto taskB() {
     auto input = readInput();
-    map<string, int> fieldOrder;
+
     auto validTickets = allValidTickets(input);
 
     map<int, vector<string>> allMatches;
-
-    cout << validTickets.size() << endl;
-
-    long long result = 1;
 
     // Find all rules that match each ticket position
     for (const auto &name_rule : input.rules) {
@@ -152,14 +148,14 @@ auto taskB() {
         }
     }
 
+    map<string, int> fieldOrder;
+
     // Positions have 1 or more matching rules, iteratively remove the unique ones
     while (fieldOrder.size() != input.yourTicket.size()) {
         for (const auto &kv : allMatches) {
             if (kv.second.size() == 1) {
                 string name = kv.second[0];
                 fieldOrder[name] = kv.first;
-
-                cout << name << " -> " << kv.first << endl;
 
                 for (auto &kv2 : allMatches) {
                     const auto& matchingNames = kv2.second;
@@ -177,6 +173,7 @@ auto taskB() {
         }
     }
 
+    long long result = 1;
     for (const auto& kv: fieldOrder) {
         if (kv.first.substr(0, 9) == "departure") {
             result *= input.yourTicket[kv.second];
