@@ -7,20 +7,27 @@
 
 using namespace std;
 
-NDArray<short> readInput(int turns) {
+NDArray<short> readInput(int turns, size_t ndim = 3) {
     auto lines = readLines("input-17.txt");
-    NDArray<short> result(
-            {lines.size() + 2 * turns, lines[0].size() + 2 * turns, (size_t)1 + 2 * turns},
-            {-turns, -turns, -turns});
+
+    vector<size_t> shape(ndim, (size_t)1 + 2 * turns);
+    shape[0] = lines.size() + 2 * turns;
+    shape[1] = lines[0].size() + 2 * turns;
+    index_t offsets(ndim, -turns);
+
+    NDArray<short> result(shape, offsets);
     for (size_t i = 0; i < lines.size(); i++) {
         auto line = lines[i];
         for (size_t j = 0; j < line.size(); j++) {
+            index_t index(ndim, 0);
+            index[0] = i;
+            index[1] = j;
             switch(line[j]) {
                 case '#':
-                    result.set({i, j, 0}, 1);
+                    result.set(index, 1);
                     break;
                 case '.':
-                    result.set({i, j, 0}, 0);
+                    result.set(index, 0);
                     break;
                 default:
                     throw runtime_error("Invalid token.");
@@ -30,56 +37,76 @@ NDArray<short> readInput(int turns) {
     return result;
 }
 
-NDArray<short> getNeighbourCounts(const NDArray<short>& plan) {
-    NDArray<short> result(plan.shape(), plan.offsets());
-    for (int i = plan.offsets()[0]; i < plan.offsets()[0] + plan.shape()[0]; i++) {
-        for (int j = plan.offsets()[1]; j < plan.offsets()[1] + plan.shape()[1]; j++) {
-            for (int k = plan.offsets()[2]; k < plan.offsets()[2] + plan.shape()[2]; k++) {
-                if (plan.at({i, j, k})) {
-                    for (int l = i - 1; l <= i + 1; l++) {
-                        for (int m = j - 1; m <= j + 1; m++) {
-                            for (int n = k - 1; n <= k + 1; n++) {
-                                if ((l == i) && (m == j) && (n == k)) {
-                                    continue;
-                                }
-                                if (plan.isValidIndex({l, m, n})) {
-                                    result.at({l, m, n}) += 1;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+void calculateNeighboursCount(const NDArray<short>& plan, NDArray<short>& target, const index_t& sourceIndex = {}, const index_t& targetIndex = {}) {
+    if (targetIndex.size() == plan.ndim()) {
+        if (!target.isValidIndex(targetIndex)) {
+            return;
+        }
+        if (targetIndex == sourceIndex) {
+            return;
+        }
+        if (plan.at(sourceIndex)) {
+            target.at(targetIndex) += 1;
+        }
+    } else if (sourceIndex.size() == plan.ndim()) {
+        size_t currentDim = targetIndex.size();
+        index_t newIndex = targetIndex;
+        newIndex.push_back(sourceIndex[currentDim] - 1);
+        for (int _ = 0; _ <= 2; _++) {
+            calculateNeighboursCount(plan, target, sourceIndex, newIndex);
+            newIndex[currentDim]++;
         }
     }
-    return result;
+    else {
+        size_t currentDim = sourceIndex.size();
+        index_t newIndex = sourceIndex;
+        newIndex.push_back(plan.offsets()[currentDim]);
+        for (int _ = 0; _ < plan.shape()[currentDim]; _++) {
+            calculateNeighboursCount(plan, target, newIndex);
+            newIndex[currentDim]++;
+        }
+    }
+}
+
+void updatePlan(NDArray<short>& plan, const NDArray<short>& neighbours, const index_t& index = {}) {
+    if (index.size() == plan.ndim()) {
+        auto n = neighbours.at(index);
+        if (plan.at(index) && ((n < 2) || (n > 3))) {
+            plan.at(index) = 0;
+        }
+        else if (!plan.at(index) && (n == 3)) {
+            plan.at(index) = 1;
+        }
+    } else {
+        size_t currentDim = index.size();
+        for (int i = plan.offsets()[currentDim]; i < plan.offsets()[currentDim] + plan.shape()[currentDim]; i++) {
+            index_t newIndex = index;
+            newIndex.push_back(i);
+            updatePlan(plan, neighbours, newIndex);
+        }
+    }
 }
 
 auto taskA() {
     int turns = 6;
     NDArray<short> plan = readInput(turns);
     for (int turn = 0; turn < turns; turn++) {
-        auto neighbours = getNeighbourCounts(plan);
-        for (int i = plan.offsets()[0]; i < plan.offsets()[0] + plan.shape()[0]; i++) {
-            for (int j = plan.offsets()[1]; j < plan.offsets()[1] + plan.shape()[1]; j++) {
-                for (int k = plan.offsets()[2]; k < plan.offsets()[2] + plan.shape()[2]; k++) {
-                    vector<int64> index = {i, j, k};
-                    auto n = neighbours.at(index);
-                    if (plan.at(index) && ((n < 2) || (n > 3))) {
-                        plan.at(index) = 0;
-                    }
-                    else if (!plan.at(index) && (n == 3)) {
-                        plan.at(index) = 1;
-                    }
-                }
-            }
-        }
+        NDArray<short> neighbours(plan.shape(), plan.offsets());
+        calculateNeighboursCount(plan, neighbours);
+        updatePlan(plan, neighbours);
     }
     return plan.sum();
 }
 
 auto taskB() {
-    NOT_YET_IMPLEMENTED
+    int turns = 6;
+    NDArray<short> plan = readInput(turns, 4);
+    for (int turn = 0; turn < turns; turn++) {
+        NDArray<short> neighbours(plan.shape(), plan.offsets());
+        calculateNeighboursCount(plan, neighbours);
+        updatePlan(plan, neighbours);
+    }
+    return plan.sum();
 }
 
 MAIN;
