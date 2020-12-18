@@ -29,7 +29,7 @@ public:
         }
         size_t internal = 0;
         for (size_t i = 0; i < _shape.size(); i++) {
-            internal += (index[i] - _offsets[i]) * _strides[i];
+            internal += size_t((index[i] - _offsets[i]) * _strides[i]);
         }
         return _data.at(internal);
     }
@@ -40,7 +40,7 @@ public:
         }
         size_t internal = 0;
         for (size_t i = 0; i < _shape.size(); i++) {
-            internal += (index[i] - _offsets[i]) * _strides[i];
+            internal += size_t((index[i] - _offsets[i]) * _strides[i]);
         }
         return _data.at(internal);
     }
@@ -51,7 +51,7 @@ public:
         }
         size_t internal = 0;
         for (size_t i = 0; i < _shape.size(); i++) {
-            internal += (index[i] - _offsets[i]) * _strides[i];
+            internal += size_t((index[i] - _offsets[i]) * _strides[i]);
         }
         _data[internal] = value;
     }

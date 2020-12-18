@@ -55,20 +55,26 @@ void runTasks(TaskA taskA, TaskB taskB)
 
 std::ifstream openInputFile(const std::string &basename)
 {
-	const char* directory = getenv("ADVENT_OF_CODE_DATA_DIR");
+#ifdef _MSC_VER
+    size_t size;
+    char directory[512];
+    _dupenv_s((char **) &directory, &size, "ADVENT_OF_CODE_DATA_DIR");
+#else
+    const char* directory = getenv("ADVENT_OF_CODE_DATA_DIR");
+    size_t size = strlen(directory);
+#endif
     std::filesystem::path dataPath;
-	if (directory) {
-	    dataPath = std::filesystem::path(directory) / basename;
+    if (size) {
+        dataPath = std::filesystem::path(std::string(directory)) / basename;
     } else {
         dataPath = std::filesystem::path(basename);
-	}
-	std::ifstream infile(dataPath);
-	std::string buffer;
+    }
+    std::ifstream infile(dataPath);
+    std::string buffer;
 
-	if (!infile.good())
-	{
-		std::cerr << "File " << std::filesystem::absolute(dataPath) << " could not be opened." << std::endl;
-		exit(-1);
+    if (!infile.good()) {
+        std::cerr << "File " << std::filesystem::absolute(dataPath) << " could not be opened." << std::endl;
+        exit(-1);
 	}
 	return infile;
 }
