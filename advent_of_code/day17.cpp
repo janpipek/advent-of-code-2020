@@ -1,15 +1,15 @@
 #include <iostream>
 #include <algorithm>
 
-#include "lib.hh"
-#include "ndarray.hh"
+#include "aoc/task.hh"
+#include "aoc/ndarray.hh"
 
 using namespace std;
 
 NDArray<short> readInput(int turns, size_t ndim = 3) {
     auto lines = readLines("input-17.txt");
 
-    vector<size_t> shape(ndim, (size_t)1 + 2 * turns);
+    vector<size_t> shape(ndim, (size_t) 1 + 2 * turns);
     shape[0] = lines.size() + 2 * turns;
     shape[1] = lines[0].size() + 2 * turns;
     index_t offsets(ndim, -turns);

@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <iostream>
 
-#include "lib.hh"
+#include "aoc/task.hh"
 
 using namespace std;
 

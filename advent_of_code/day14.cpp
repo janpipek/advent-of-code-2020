@@ -2,7 +2,7 @@
 #include <numeric>
 #include <string>
 
-#include "lib.hh"
+#include "aoc/task.hh"
 
 using namespace std;
 

@@ -4,19 +4,18 @@
 #include <numeric>
 #include <vector>
 
+#include "mathematics.hh"
+
 using index_item_t = int64_t;
 using index_t = std::vector<index_item_t>;
-
-template<typename T> T product(const std::vector<T>& numbers) {
-    return std::accumulate(numbers.cbegin(), numbers.cend(), (T)1, std::multiplies<T>());
-}
 
 /**
  * Multidimensional (numeric) array.
  *
  * @tparam T Element type
  */
-template<typename T> class NDArray {
+template<typename T>
+class NDArray {
 public:
     NDArray(const std::vector<size_t>& shape);
 

@@ -1,13 +1,10 @@
 #include <functional>
 #include <iterator>
-#include <iostream>
-#include <deque>
 #include <map>
 #include <numeric>
-#include <string>
 #include <algorithm>
 
-#include "lib.hh"
+#include "aoc/task.hh"
 
 using namespace std;
 

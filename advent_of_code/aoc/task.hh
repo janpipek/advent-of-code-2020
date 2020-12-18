@@ -1,5 +1,5 @@
-#ifndef ADVENT_OF_CODE_LIB_HH
-#define ADVENT_OF_CODE_LIB_HH
+#ifndef ADVENT_OF_CODE_TASK_HH
+#define ADVENT_OF_CODE_TASK_HH
 
 #include <chrono>
 #include <exception>
@@ -189,23 +189,5 @@ std::vector<std::string> split(const std::string &original, const std::string &d
 	}
 	result.push_back(original.substr(offset));
 	return result;
-}
-
-template<typename T1, typename T2> std::vector<T2> asType(const std::vector<T1>& input) {
-	std::vector<T2> output;
-	std::transform(input.cbegin(), input.cend(), std::back_inserter(output), [](const T1& x) {return (T2)x; });
-	return output;
-}
-
-template<typename T> std::ostream& operator<<(std::ostream& out, const std::vector<T>& v) {
-    out << "{";
-    for (int i = 0; i < v.size(); i++) {
-        out << v[i];
-        if (i != v.size() - 1) {
-            out << ", ";
-        }
-    }
-    out << "}";
-    return out;
 }
 #endif
