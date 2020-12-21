@@ -4,25 +4,26 @@
 
 #include "aoc/task.hh"
 #include "aoc/ndarray.hh"
-#include "aoc/debug.hh"
+#include "aoc/multi_array.hh"
 
 using namespace std;
 
 struct Tile {
     int id{};
-    NDArray<int> data;
+    multi_array<int, 2> data;
 
-    int size() const {
+    size_t size() const {
         return data.shape()[0];
     }
 
     vector<vector<int>> getEdges() const {
         vector<vector<int>> result;
-        int i;
-        vector<int> top;
-        for (i = 0; i < size(); i++) {
+        size_t i;
+        data.slice<0>(0);
+        /* for (i = 0; i < size(); i++) {
+            top.push_back(data.slice<)
             top.push_back(data.at({0, i}));
-        }
+        }*/
         vector<int> right;
         for (i = 0; i < size(); i++) {
             right.push_back(data.at({i, size() - 1}));
@@ -51,6 +52,18 @@ struct Tile {
         }
         return result;
     }
+
+    Tile flip() const {
+        return {
+                id,
+                data.copy().slice<0>(-1, 0, -1)
+        };
+    }
+};
+
+struct TileState {
+    bool flipped;
+    int rotation;   // 0-3
 };
 
 using Input = vector<Tile>;
@@ -62,11 +75,11 @@ Input readInput() {
         auto header = section[0];
         Tile tile{
                 stoi(header.substr(5, header.size() - 6)),
-                NDArray<int>({section.size() - 1, section[1].size()})
+                multi_array<int, 2>({section.size() - 1, section[1].size()})
         };
-        for (int i = 1; i < section.size(); i++) {
+        for (size_t i = 1; i < section.size(); i++) {
             auto line = section[i];
-            for (int j = 0; j < line.size(); j++) {
+            for (size_t j = 0; j < line.size(); j++) {
                 tile.data.at({i - 1, j}) = (line[j] == '#') ? 1 : 0;
             }
         }

@@ -85,9 +85,22 @@ public:
         return std::accumulate(_data.cbegin(), _data.cend(), 0, std::plus<T>());
     }
 
-    NDArray<T>& operator=(const T& val) {
+    NDArray<T> &operator=(const T &val) {
         _data = std::vector(size(), val);
     }
+
+    std::vector<T> toVector() const {
+        // Note: dropping offsets
+        if (ndim() != 1) {
+            throw std::runtime_error("Only 1-D arrays can be converted to vector.");
+        }
+        return _data;
+    }
+
+    /*
+    NDArray<T> getSlice(int index, size_t dim) const {
+
+    }*/
 
 private:
     std::vector<T> _data;
