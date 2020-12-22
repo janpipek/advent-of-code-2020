@@ -11,6 +11,8 @@
 #include <sstream>
 #include <vector>
 
+#include "debug.hh"
+
 template <typename Task> void runTask(const std::string& name, Task task)
 {
 	auto start = std::chrono::steady_clock::now();
