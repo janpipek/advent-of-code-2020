@@ -10,6 +10,7 @@
 
 using namespace std;
 
+// How many nested rule 11's there can be.
 const int recursionLevel = 32;
 
 class Rule {
@@ -187,17 +188,17 @@ auto taskA() {
     auto input = readInput();
     auto rule0 = input.rules->at(0);
     return count_if(input.lines.cbegin(), input.lines.cend(), [rule0](auto line) { return rule0->matches(line); });
-    return 0;
 }
 
 auto taskB() {
     auto input = readInput();
+
+    // Modifications
     (*input.rules)[8] = make_shared<Rule8>(input.rules);
     (*input.rules)[11] = make_shared<Rule11>(input.rules);
 
     auto rule0 = input.rules->at(0);
     return count_if(input.lines.cbegin(), input.lines.cend(), [rule0](auto line) { return rule0->matches(line); });
-    return 0;
 }
 
 MAIN;

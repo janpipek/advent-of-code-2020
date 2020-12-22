@@ -2,6 +2,7 @@
 #define ADVENT_OF_CODE_TASK_HH
 
 #include <chrono>
+#include <cstring>
 #include <exception>
 #include <filesystem>
 #include <fstream>
