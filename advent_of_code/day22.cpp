@@ -34,7 +34,7 @@ void playTurn(Deck& deck1, Deck& deck2) {
     }
 }
 
-u_int8_t playGame(Deck& deck1, Deck& deck2) {
+uint8_t playGame(Deck &deck1, Deck &deck2) {
     while (true) {
         playTurn(deck1, deck2);
         if (deck1.empty()) {
@@ -43,10 +43,10 @@ u_int8_t playGame(Deck& deck1, Deck& deck2) {
         if (deck2.empty()) {
             return PLAYER1;
         }
-    }    
+    }
 }
 
-u_int8_t playRecursiveGame(Deck& deck1, Deck& deck2, size_t game = 1) {
+uint8_t playRecursiveGame(Deck &deck1, Deck &deck2, size_t game = 1) {
     static size_t maxGame = 1;
     if (game > maxGame) {
         maxGame = game;
@@ -54,7 +54,7 @@ u_int8_t playRecursiveGame(Deck& deck1, Deck& deck2, size_t game = 1) {
 
     debug << endl << "=== Game " << game << " ===" << endl << endl;
 
-    GameLog log {};
+    GameLog log{};
 
     int round = 0;
 
@@ -136,8 +136,8 @@ u_int8_t playRecursiveGame(Deck& deck1, Deck& deck2, size_t game = 1) {
     }
 }
 
-u_int64_t getScore(const Deck& deck) {
-    u_int64_t result = 0ULL;
+uint64_t getScore(const Deck &deck) {
+    uint64_t result = 0ULL;
     for (size_t i = 0; i < deck.size(); i++) {
         result += (deck.size() - i) * deck[i];
     }
@@ -168,12 +168,17 @@ auto taskA() {
 }
 
 auto taskB() {
+    // Note: We should probably cache the game results.
+    //   Otherwise, it is computation-heavy.
+    //   Compiled with GCC in WSL, the program fails with bad_alloc
+    //   Compiled with VC++, it runs for a couple of minutes.
+
     auto input = readInput();
 
     auto winner = playRecursiveGame(input.first, input.second);
 
     debug << "== Post-game results ==" << endl;
-    debug << "Player 1's deck: " << input.first << endl; 
+    debug << "Player 1's deck: " << input.first << endl;
     debug << "Player 2's deck: " << input.second << endl;
 
     if (winner == PLAYER1) {
