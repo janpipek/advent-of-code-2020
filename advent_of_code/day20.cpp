@@ -51,7 +51,38 @@ struct Tile {
         }
         return result;
     }
+
+    NDArray<int> stripEdges() const {
+        NDArray<int> result({data.shape()[0] - 2, data.shape()[1] - 2});
+        for (int i = 1; i < data.shape()[0] - 1; i++) {
+            for (int j = 1; j < data.shape()[1] - 1; j++) {
+                result.at({i-1, j-1}) = data.at({i, j});
+            }
+        }
+        return result;
+    }
+
+    /** Turn 90 degrees to the right **/
+    Tile rotate() const {
+        NDArray<int> newData = data.swapAxes(0, 1).flip(1);
+        return {id, newData};
+    }
+
+    Tile transform(size_t rotations, bool flip) const {
+        Tile result = *this;
+        for (size_t i = 0; i < rotations; i++) {
+            result = result.rotate();
+        }
+        if (flip) {
+            result.data = result.data.flip(0);
+        }
+        return result;
+    }
 };
+
+Tile mergeTiles(const vector<vector<Tile>>& tiles) {
+    // TODO: Implement
+}
 
 using Input = vector<Tile>;
 
@@ -125,6 +156,12 @@ auto taskA() {
 }
 
 auto taskB() {
+    
+    // 1) Find first corner tile
+    // 2) Find its rotation
+    // 3) Match the tiles incrementally
+    // 4) Merge the tiles into one tile
+    // 5) Rotate and match the monster
     NOT_YET_IMPLEMENTED
 }
 

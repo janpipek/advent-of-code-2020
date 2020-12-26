@@ -23,25 +23,15 @@ public:
 
     NDArray(const std::vector<size_t>& shape, const index_t& offsets, const std::vector<T>& data);
 
+    // NDArray(const std::vector<size_t>& shape, const T& value);
+
     auto& at(const index_t& index) {
-        if (!isValidIndex(index)) {
-            throw std::runtime_error("Invalid index.");
-        }
-        size_t internal = 0;
-        for (size_t i = 0; i < _shape.size(); i++) {
-            internal += size_t((index[i] - _offsets[i]) * _strides[i]);
-        }
+        auto internal = internalIndex(index);
         return _data.at(internal);
     }
 
     const auto& at(const index_t& index) const {
-        if (!isValidIndex(index)) {
-            throw std::runtime_error("Invalid index.");
-        }
-        size_t internal = 0;
-        for (size_t i = 0; i < _shape.size(); i++) {
-            internal += size_t((index[i] - _offsets[i]) * _strides[i]);
-        }
+        auto internal = internalIndex(index);
         return _data.at(internal);
     }
 
@@ -85,11 +75,49 @@ public:
         return std::accumulate(_data.cbegin(), _data.cend(), 0, std::plus<T>());
     }
 
+    NDArray<T> swapAxes(size_t axis1, size_t axis2) const {
+        if (axis1 >= ndim() || axis2 >= ndim()) {
+            throw std::runtime_error("Invalid axes to swap.");
+        }
+        NDArray<T> result = *this;
+        std::swap(result._shape[axis1], result._shape[axis2]);
+        std::swap(result._strides[axis1], result._strides[axis2]);
+        std::swap(result._offsets[axis1], result._offsets[axis2]);
+        return result;
+    }
+
+    NDArray<T> flip(size_t axis) const {
+        if (axis >= ndim()) {
+            throw std::runtime_error("Invalid axis to flip.");
+        }
+        
+        if (ndim() != 2) {
+            // TODO: Make this general
+            throw std::runtime_error("Not implemented.");
+        } else {
+            NDArray<T> result(_shape, _offsets);
+            size_t other = 1 - axis;
+            int minI = _offsets[axis];
+            int maxI = _offsets[axis] + _shape[axis];
+            for (int i = minI; i < maxI; i++) {
+                int targetI = maxI - (i - minI) - 1;
+                for (int j = _offsets[other]; j < _offsets[other] + _shape[other]; j++) {
+                    index_t sourceIndex = (axis == 0) ? index_t({i, j}) : index_t({j, i});
+                    index_t targetIndex = (axis == 0) ? index_t({targetI, j}) : index_t({j, targetI});
+                    result.at(targetIndex) = at(sourceIndex);
+                }
+            }
+            return result;
+        }
+    }
+
     NDArray<T>& operator=(const T& val) {
         _data = std::vector(size(), val);
     }
 
 private:
+    NDArray() { }
+
     std::vector<T> _data;
 
     std::vector<size_t> _shape;
@@ -99,6 +127,17 @@ private:
     index_t _offsets;
 
     void _calculateStrides();
+
+    size_t internalIndex(const index_t& index) const {
+        if (!isValidIndex(index)) {
+            throw std::runtime_error("Invalid index.");
+        }
+        size_t internal = 0;
+        for (size_t i = 0; i < _shape.size(); i++) {
+            internal += size_t((index[i] - _offsets[i]) * _strides[i]);
+        }
+        return internal;
+    }
 };
 
 template<typename T> NDArray<T>::NDArray(const std::vector<size_t>& shape) : _shape(shape), _data(product(shape)), _offsets(shape.size(), 0) {
