@@ -8,6 +8,13 @@
 
 using namespace std;
 
+enum side_t : int {
+    TOP = 1,
+    RIGHT = 2,
+    BOTTOM = 3,
+    LEFT = 4,
+};
+
 struct Tile {
     int id{};
     NDArray<int> data;
@@ -16,31 +23,45 @@ struct Tile {
         return data.shape()[0];
     }
 
+    side_t findMatch(const Tile& other) {
+        for (int i = 1; i < 5; i++) {
+            if (getEdge(i) == other.getEdge(5 - i));
+        }
+        return 0;
+    }
+
+    vector<int> getEdge(side_t side) const {
+        vector<int> result;
+        int i;
+        if (side == TOP) {
+            for (i = 0; i < size(); i++) {
+                result.push_back(data.at({0, i}));
+            }
+        }
+        else if (side == RIGHT) {
+            for (i = 0; i < size(); i++) {
+                result.push_back(data.at({i, size() - 1}));
+            }
+        }
+        else if (side == BOTTOM) {
+            for (i = 0; i < size(); i++) {
+                result.push_back(data.at({size() - 1, i}));
+            }
+        }
+        else if (side == LEFT) {
+            for (i = 0; i < size(); i++) {
+                result.push_back(data.at({i, 0}));
+            }
+        }
+        return result;
+    }
+
     vector<vector<int>> getEdges() const {
         vector<vector<int>> result;
-        int i;
-        vector<int> top;
-        for (i = 0; i < size(); i++) {
-            top.push_back(data.at({0, i}));
-        }
-        vector<int> right;
-        for (i = 0; i < size(); i++) {
-            right.push_back(data.at({i, size() - 1}));
-        }
-        vector<int> bottom;
-        for (i = 0; i < size(); i++) {
-            bottom.push_back(data.at({size() - 1, i}));
-        }
-        vector<int> left;
-        for (i = 0; i < size(); i++) {
-            left.push_back(data.at({i, 0}));
-        }
-
-        result.push_back(top);
-        result.push_back(right);
-        result.push_back(bottom);
-        result.push_back(left);
-
+        result.push_back(getEdge(TOP));
+        result.push_back(getEdge(RIGHT));
+        result.push_back(getEdge(BOTTOM));
+        result.push_back(getEdge(LEFT));
         return result;
     }
 
@@ -63,7 +84,7 @@ struct Tile {
     }
 
     /** Turn 90 degrees to the right **/
-    Tile rotate() const {
+    Tile rotateRight() const {
         NDArray<int> newData = data.swapAxes(0, 1).flip(1);
         return {id, newData};
     }
@@ -71,17 +92,49 @@ struct Tile {
     Tile transform(size_t rotations, bool flip) const {
         Tile result = *this;
         for (size_t i = 0; i < rotations; i++) {
-            result = result.rotate();
+            result = result.rotateRight();
         }
         if (flip) {
             result.data = result.data.flip(0);
         }
         return result;
     }
+
 };
 
 Tile mergeTiles(const vector<vector<Tile>>& tiles) {
+    auto tileSize = tiles[0][0].data.shape();
+    vector<int> newTileSize = {tileSize[0] - 2, tileSize[1] - 2};
+
+    size_t size0 = tiles.size() * newTileSize[0];
+    size_t size1 = tiles[0].size() * newTileSize[1];
+
+    NDArray<int> result({size1, size1});
+
+    int i = 0;
+    for (const auto& row: tiles) {
+        int j = 0;
+        for (const auto& tile: row) {
+            auto stripped = tile.stripEdges();
+            for (int k = 0; k < newTileSize[0]; k++) {
+                for (int l = 0; l < newTileSize[1]; l++) {
+                    index_t index = {
+                        i * newTileSize[0] + k,
+                        j * newTileSize[1] + l
+                    };
+                    int value = stripped.at({k, l});
+                    result.set(index, value);
+                }
+            }
+            j++;
+        }
+        i++;
+    }
+
+
+
     // TODO: Implement
+    return {0, result};
 }
 
 using Input = vector<Tile>;
@@ -106,17 +159,16 @@ Input readInput() {
     return result;
 }
 
-auto taskA() {
-    auto input = readInput();
+vector<long long> findCorners(const Input& input) {
+    vector<long long> result;
+
     vector<vector<vector<int>>> edges;
     vector<vector<vector<int>>> flipedEdges;
     transform(input.cbegin(), input.cend(), back_inserter(edges), [](auto &tile) { return tile.getEdges(); });
     transform(input.cbegin(), input.cend(), back_inserter(flipedEdges),
               [](auto &tile) { return tile.getFlippedEdges(); });
 
-    int64_t result = 1;
     for (int i = 0; i < input.size(); i++) {
-        // cout << input[i].id << endl;
         int uniqueEdges = 0;
         for (const auto &edge : edges[i]) {
             int sameFound = 0;
@@ -127,16 +179,12 @@ auto taskA() {
                 auto other = edges[j];
                 for (const auto &otherEdge : other) {
                     if (otherEdge == edge) {
-                        // cout << edge << endl;
-                        // cout << otherEdge << endl;
                         sameFound++;
                     }
                 }
                 auto flippedOther = flipedEdges[j];
                 for (const auto &otherEdge : flippedOther) {
                     if (otherEdge == edge) {
-                        // cout << edge << endl;
-                        // cout << otherEdge << endl;
                         sameFound++;
                     }
                 }
@@ -149,14 +197,22 @@ auto taskA() {
             }
         }
         if (uniqueEdges == 2) {
-            result *= input[i].id;
+            result.push_back(input[i].id);
         }
-    }
+    }   
     return result;
 }
 
+auto taskA() {
+    auto input = readInput();
+    auto corners = findCorners(input);
+    return product(corners);
+}
+
 auto taskB() {
-    
+    auto input = readInput();
+    auto corners = findCorners(input);
+
     // 1) Find first corner tile
     // 2) Find its rotation
     // 3) Match the tiles incrementally
