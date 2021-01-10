@@ -1,3 +1,4 @@
+#include <cmath>
 #include <iostream>
 #include <string>
 #include <algorithm>
@@ -9,11 +10,35 @@
 using namespace std;
 
 enum side_t : int {
+    NONE = 0,
+
     TOP = 1,
     RIGHT = 2,
     BOTTOM = 3,
     LEFT = 4,
 };
+
+vector<string> MONSTER_SOURCE = {
+    "                  # ",
+    "#    ##    ##    ###",
+    " #  #  #  #  #  #   ",
+};
+
+side_t opposite(side_t side) {
+    switch (side)
+    {
+    case TOP:
+        return BOTTOM;
+    case RIGHT:
+        return LEFT;
+    case BOTTOM:
+        return TOP;
+    case LEFT:
+        return RIGHT;
+    default:
+        return NONE;
+    }
+}
 
 struct Tile {
     int id{};
@@ -23,11 +48,15 @@ struct Tile {
         return data.shape()[0];
     }
 
-    side_t findMatch(const Tile& other) {
+    side_t findMatch(const Tile& other) const {
         for (int i = 1; i < 5; i++) {
-            if (getEdge(i) == other.getEdge(5 - i));
+            side_t side = (side_t)i;
+            side_t opp = opposite(side);
+            if (getEdge(side) == other.getEdge(opp)) {
+                return side;
+            }
         }
-        return 0;
+        return NONE;
     }
 
     vector<int> getEdge(side_t side) const {
@@ -89,6 +118,12 @@ struct Tile {
         return {id, newData};
     }
 
+    /** Turn 90 degrees to the right **/
+    Tile rotateLeft() const {
+        // TODO: Could be more efficient
+        return transform(3, false);
+    }    
+
     Tile transform(size_t rotations, bool flip) const {
         Tile result = *this;
         for (size_t i = 0; i < rotations; i++) {
@@ -103,6 +138,11 @@ struct Tile {
 };
 
 Tile mergeTiles(const vector<vector<Tile>>& tiles) {
+    if (!tiles.size() || !tiles[0].size()) {
+        cerr << "No tiles" << endl;
+        SOLUTION_NOT_FOUND;
+    }
+
     auto tileSize = tiles[0][0].data.shape();
     vector<int> newTileSize = {tileSize[0] - 2, tileSize[1] - 2};
 
@@ -159,8 +199,8 @@ Input readInput() {
     return result;
 }
 
-vector<long long> findCorners(const Input& input) {
-    vector<long long> result;
+vector<Tile> findCorners(const Input& input) {
+    vector<Tile> result;
 
     vector<vector<vector<int>>> edges;
     vector<vector<vector<int>>> flipedEdges;
@@ -197,7 +237,7 @@ vector<long long> findCorners(const Input& input) {
             }
         }
         if (uniqueEdges == 2) {
-            result.push_back(input[i].id);
+            result.push_back(input[i]);
         }
     }   
     return result;
@@ -206,17 +246,127 @@ vector<long long> findCorners(const Input& input) {
 auto taskA() {
     auto input = readInput();
     auto corners = findCorners(input);
-    return product(corners);
+
+    vector<long long> ids;
+    transform(corners.cbegin(), corners.cend(), back_inserter(ids), [](const Tile& tile) { return tile.id; });
+
+    return product(ids);
+}
+
+Tile findMatching(const Tile& tile1, const Input& input, side_t side) {
+    for (const auto& tile2: input) {
+        if (tile1.id == tile2.id) {
+            continue;
+        }
+        for (int rotation = 0; rotation < 4; rotation++) {
+            bool flips[] = {false, true};
+            for (auto flip : flips) {        
+                auto transformed = tile2.transform(rotation, flip);
+                if (tile1.findMatch(transformed) == side) {
+                    // cout << "Matched " << tile1.id << " and " << tile2.id << endl;
+                    return transformed;
+                }
+            }
+        }
+    }
+    cerr << "Matching tile for " << tile1.id << " not found." << endl;
+    SOLUTION_NOT_FOUND;
+}
+
+// Output for debugging purposes
+ostream& operator<<(ostream& stream, const Tile& tile) {
+    cout << "Tile " << tile.id << "(" << tile.data.shape()[0] << "x" << tile.data.shape()[1] << ")" << endl;
+    cout << "{" << endl;
+    for (int i = 0; i < tile.data.shape()[0]; i++) {
+        cout << "  {";
+        for (int j = 0; j < tile.data.shape()[1]; j++) {
+            cout << tile.data.at({i, j});
+            if (j <tile.data.shape()[1] - 1) {
+                cout << " ";
+            }
+        }
+        cout << "}" << endl;
+    }
+    cout << "}" << endl;
+}
+
+Tile alignTopLeftCorner(const Tile& tile, const Input& input) {
+    Tile result = tile;
+    // Rotate the first one
+    size_t matching = 0;
+
+    for (const auto& tile: input) {
+        if (tile.id == result.id) {
+            continue;
+        }
+        for (int rotation = 0; rotation < 4; rotation++) {
+            bool flips[] = {false, true};
+            for (auto flip : flips) {
+                auto transformed = tile.transform(rotation, flip);
+                side_t match = result.findMatch(transformed);
+                if (match != NONE) {
+                    matching++;
+                    if (match == LEFT) {
+                        result = result.rotateLeft();
+                    }
+                    if (match == TOP) {
+                        result = result.rotateRight();
+                    }
+                }
+            }
+        }
+    }
+
+    if (matching != 2) {
+        cout << matching << endl;
+        SOLUTION_NOT_FOUND;
+    }
+    return result;
+}
+
+Tile assembleBoard(const Tile& topLeft, const Input& input) {
+    size_t boardLength = (size_t)sqrt(input.size());
+    vector<vector<Tile>> tiles;
+    for (int i = 0; i < boardLength; i++) {
+        vector<Tile> row;
+        // Initial seed
+        if (i == 0) {
+            row.push_back(topLeft); 
+        } else {
+            row.push_back(findMatching(tiles[i-1][0], input, BOTTOM));
+        }
+        tiles.push_back(row);
+        vector<Tile>& rowRef = tiles[i];
+
+        for (int j = 1; j < boardLength; j++)  {
+            rowRef.push_back(findMatching(tiles[i][j-1], input, RIGHT));
+        }
+    }
+    
+    return mergeTiles(tiles);
+}
+
+vector<vector<int>> readMonster() {
+    vector<vector<int>> result;
+    for (auto rowSource: MONSTER_SOURCE) {
+        vector<int> row;
+        for (auto c: rowSource) {
+            row.push_back(c == '#' ? 1: 0);
+        }
+        result.push_back(row);
+    }
+    return result;
 }
 
 auto taskB() {
     auto input = readInput();
-    auto corners = findCorners(input);
+    vector<Tile> corners = findCorners(input);
+    Tile topLeft = alignTopLeftCorner(corners[0], input);
+    Tile board = assembleBoard(topLeft, input);
 
-    // 1) Find first corner tile
-    // 2) Find its rotation
-    // 3) Match the tiles incrementally
-    // 4) Merge the tiles into one tile
+
+    cout << board << endl;
+
     // 5) Rotate and match the monster
     NOT_YET_IMPLEMENTED
 }
