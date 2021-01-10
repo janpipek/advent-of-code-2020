@@ -135,6 +135,13 @@ struct Tile {
         return result;
     }
 
+    size_t height() const {
+        return data.shape()[0];
+    }
+
+    size_t width() const {
+        return data.shape()[1];
+    }
 };
 
 Tile mergeTiles(const vector<vector<Tile>>& tiles) {
@@ -358,17 +365,66 @@ vector<vector<int>> readMonster() {
     return result;
 }
 
+bool markMonsterAtPosition(size_t i, size_t j, Tile& board, const vector<vector<int>>& monster) {
+    if (i + monster.size() >= board.height()) {
+        return false;
+    }
+    if (j + monster[0].size() >= board.width()) {
+        return false;
+    }
+    for (size_t k = 0; k < monster.size(); k++) {
+        for (size_t l = 0; l < monster[0].size(); l++) {
+            if ((monster[k][l]) && (!board.data.at({i + k, j + l}))) {
+                return false;
+            }
+        }
+    }
+
+    // Now we mark the monster pixels (with 2)
+    for (size_t k = 0; k < monster.size(); k++) {
+        for (size_t l = 0; l < monster[0].size(); l++) {
+            if (monster[k][l]) {
+                board.data.at({i + k, j + l}) = 2;
+            }
+        }
+    }    
+    return true;
+}
+
 auto taskB() {
     auto input = readInput();
     vector<Tile> corners = findCorners(input);
     Tile topLeft = alignTopLeftCorner(corners[0], input);
     Tile board = assembleBoard(topLeft, input);
+    auto monster = readMonster();
 
-
-    cout << board << endl;
-
-    // 5) Rotate and match the monster
-    NOT_YET_IMPLEMENTED
+    for (int rotation = 0; rotation < 4; rotation++) {
+        bool flips[] = {false, true};
+        for (auto flip : flips) {
+            int monsters = 0;
+      
+            auto transformed = board.transform(rotation, flip);
+            for (int i = 0; i < transformed.height(); i++) {
+                for (int j = 0; j < transformed.width(); j++) {
+                    if (markMonsterAtPosition(i, j, transformed, monster)) {
+                        monsters++;
+                    }
+                }
+            }
+            if (monsters) {
+                int sum = 0;
+                for (int i = 0; i < transformed.height(); i++) {
+                    for (int j = 0; j < transformed.width(); j++) {
+                        if (transformed.data.at({i, j}) == 1) {
+                            sum++;
+                        }
+                    }
+                }
+                return sum;
+            }
+        }
+    }
+    SOLUTION_NOT_FOUND;
 }
 
 MAIN;
